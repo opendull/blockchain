@@ -43,28 +43,30 @@ def issue_certificate():
     if not cert_id or not student_name or not course or not file:
         return jsonify({"error": "Missing fields"}), 400
 
-    # Calculate hash
-    cert_hash = calculate_hash(file)
+    # Read PDF in memory and calculate hash
+    file_bytes = file.read()
+    cert_hash = hashlib.sha256(file_bytes).hexdigest()
 
-    # Load existing certificates
-    data = load_hashes()
+    # Load existing JSON or create new
+    if os.path.exists(HASH_FILE):
+        with open(HASH_FILE, "r") as f:
+            data = json.load(f)
+    else:
+        data = {}
 
-    # Save new certificate entry
+    # Store hash + metadata
     data[cert_id] = {
+        "certificate_hash": cert_hash,
         "student_name": student_name,
         "course": course,
-        "certificate_hash": cert_hash,
         "issued_on": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
 
-    save_hashes(data)
+    # Save JSON in /tmp
+    with open(HASH_FILE, "w") as f:
+        json.dump(data, f, indent=4)
 
-    return jsonify({
-        "message": "Certificate issued",
-        "cert_id": cert_id,
-        "hash": cert_hash
-    })
-
+    return jsonify({"message": "Certificate issued", "cert_id": cert_id, "hash": cert_hash})
 
 # ============================
 #       VERIFY API
