@@ -6,7 +6,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-HASH_FILE = "hashes.json"
+HASH_FILE = "/tmp/hashes.json"
 
 
 # -------- Helper: load JSON --------
@@ -114,6 +114,17 @@ def get_raw_data():
             return f.read()
     return "{}"
 
+@app.route("/", methods=["GET"])
+def home():
+    return {
+        "message": "Certificate Verification API is running!",
+        "endpoints": {
+            "issue": "/issue [POST] - Issue a certificate",
+            "verify": "/verify [POST] - Verify a certificate",
+            "list": "/list [GET] - List all issued certificates",
+            "data": "/data [GET] - View raw JSON of issued certificates"
+        }
+    }
 
 # Run locally
 if __name__ == "__main__":
