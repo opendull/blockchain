@@ -1,0 +1,8 @@
+{
+    "CERT001": {
+        "student_name": "John Doe",
+        "course": "B.Tech Computer Engineering",
+        "certificate_hash": "6020864acc20e1539ba126c08d00aa80db2548ac1f04c0cbe155a232e997c888",
+        "issued_on": "2025-12-09 12:13:13"
+    }
+}
